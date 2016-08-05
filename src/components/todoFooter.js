@@ -24,10 +24,10 @@ export default class TodoFooter extends React.Component {
 				</ul>
 				{ todoStore.completedCount === 0
 					? null
-					: 	<button
+						: 	<button
 							className="clear-completed"
-							onClick={this.clearCompleted}>
-							Clear completed
+							onClick={this.archieve}>
+							WELL DONE!
 						</button>
 				}
 			</footer>
@@ -47,6 +47,10 @@ export default class TodoFooter extends React.Component {
 	clearCompleted = () => {
 		this.props.todoStore.clearCompleted();
 	};
+
+	archieve = () => {
+		this.props.todoStore.archieve();
+	}
 }
 
 TodoFooter.propTypes = {

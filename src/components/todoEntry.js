@@ -10,7 +10,7 @@ export default class TodoEntry extends React.Component {
 		return (<input
 			ref="newField"
 			className="new-todo"
-			placeholder="What needs to be done?"
+			placeholder="What needs to be done, today?"
 			onKeyDown={this.handleNewTodoKeyDown}
 			autoFocus={true}
 		/>);

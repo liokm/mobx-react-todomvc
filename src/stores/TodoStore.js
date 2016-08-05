@@ -1,7 +1,9 @@
 import {observable, computed, autorun} from 'mobx';
 import TodoModel from '../models/TodoModel'
-import * as Utils from '../utils';
 
+function getDate(d) {
+	return d.toISOString().substr(0, 10);
+}
 
 export default class TodoStore {
 	@observable todos = [];
@@ -15,6 +17,24 @@ export default class TodoStore {
 
 	@computed get completedCount() {
 		return this.todos.length - this.activeTodoCount;
+	}
+
+	subscribeStorage() {
+		autorun(() => {
+			const todos = this.toJS();
+			if (this.subscribedStorage !== true) {
+				this.subscribedStorage = true;
+				return;
+			}
+			window.localStorage.setItem('today', JSON.stringify(todos));
+		})
+	}
+
+	archieve() {
+		const d = new Date();
+		d.setDate(d.getDate() - 1);
+		window.localStorage.setItem(getDate(d), JSON.stringify(this.todos.filter(x => x.completed).map(x => x.toJS())));
+		this.clearCompleted();
 	}
 
 	subscribeServerToStore(model) {
@@ -33,7 +53,7 @@ export default class TodoStore {
 	}
 
 	addTodo (title) {
-		this.todos.push(new TodoModel(this, Utils.uuid(), title, false));
+		this.todos.push(new TodoModel(this, title, false, Date.now()));
 	}
 
 	toggleAll (checked) {

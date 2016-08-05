@@ -1,8 +1,40 @@
 import React from 'react';
+import { findDOMNode } from 'react-dom';
 import {observer} from 'mobx-react';
 
 const ESCAPE_KEY = 27;
 const ENTER_KEY = 13;
+
+class FocusEndInput extends React.Component {
+	focusEnd(inputField) {
+		if (inputField != null && inputField.value.length != 0){
+			if (inputField.createTextRange){
+				const FieldRange = inputField.createTextRange();
+				FieldRange.moveStart('character',inputField.value.length);
+				FieldRange.collapse();
+				FieldRange.select();
+			} else if (inputField.selectionStart || inputField.selectionStart == '0') {
+				var elemLen = inputField.value.length;
+				inputField.selectionStart = elemLen;
+				inputField.selectionEnd = elemLen;
+				inputField.focus();
+			}
+		}else{
+			inputField.focus();
+		}
+	}
+
+	componentDidMount() {
+		this.focusEnd(this._input);
+	}
+
+	render() {
+		return <input
+			ref={input => this._input = input}
+			{...this.props}
+		/>;
+	}
+}
 
 @observer
 export default class TodoItem extends React.Component {
@@ -25,19 +57,30 @@ export default class TodoItem extends React.Component {
 						checked={todo.completed}
 						onChange={this.handleToggle}
 					/>
-					<label onDoubleClick={this.handleEdit}>
-						{todo.title}
-					</label>
+					<label
+						onClick={this.handleEdit}
+						dangerouslySetInnerHTML={
+							{
+								__html: todo.title.replace(/^(\w+-\d+)\b(.*)/, function(match, p1, p2) {
+									return `<span><a style="color: #ee3124" href="https://jira.eroad.io/browse/${p1}" target="_blank">${p1.toUpperCase()}</a> ${p2}</span>`
+								})
+							}
+						}
+					/>
 					<button className="destroy" onClick={this.handleDestroy} />
 				</div>
-				<input
-					ref="editField"
-					className="edit"
-					value={this.state.editText}
-					onBlur={this.handleSubmit}
-					onChange={this.handleChange}
-					onKeyDown={this.handleKeyDown}
-				/>
+				{
+					// <input autoFocus={true}> does not move cursor to the end of the input
+					this.props.viewStore.todoBeingEdited === todo?
+						<FocusEndInput
+							className='edit'
+							value={this.state.editText}
+							onBlur={this.handleSubmit}
+							onChange={this.handleChange}
+							onKeyDown={this.handleKeyDown}
+						/>
+					:null
+				}
 			</li>
 		);
 	}

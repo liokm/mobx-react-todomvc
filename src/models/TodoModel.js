@@ -1,16 +1,18 @@
 import {observable} from 'mobx';
+import { uuid } from '../utils';
 
 export default class TodoModel {
 	store;
-	id;
+	id = uuid();
+	createdAt;
 	@observable title;
 	@observable completed;
 
-	constructor(store, id, title, completed) {
+	constructor(store, title, completed, createdAt) {
 		this.store = store;
-		this.id = id;
 		this.title = title;
 		this.completed = completed;
+		this.createdAt = new Date(createdAt);
 	}
 
 	toggle() {
@@ -26,14 +28,11 @@ export default class TodoModel {
 	}
 
 	toJS() {
-		return {
-			id: this.id,
-			title: this.title,
-			completed: this.completed
-		};
+		// Squuuuuuuuuuuueeze
+		return [this.title, this.completed, this.createdAt.getTime()];
 	}
 
-	static fromJS(store, object) {
-		return new TodoModel(store, object.id, object.title, object.completed);
+	static fromJS(store, arr) {
+		return new TodoModel(store, ...arr);
 	}
 }
