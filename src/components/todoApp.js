@@ -13,9 +13,9 @@ export default class TodoApp extends React.Component {
 	render() {
 		const {todoStore, viewStore} = this.props;
 		return (
-			<div>
+			<div style={{maxWidth: '560px', margin: '0 auto'}} className='todoapp'>
 				<header className="header">
-					<h1>DAILY GOAL</h1>
+					{/*<h1>DAILY GOAL</h1>*/}
 					<h3 style={{color: '#aaa', textAlign: 'center', paddingTop: '1rem'}}>{viewStore.datetime}</h3>
 					<TodoEntry todoStore={todoStore} />
 				</header>

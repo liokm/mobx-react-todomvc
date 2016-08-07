@@ -14,7 +14,7 @@ todoStore.subscribeStorage();
 
 let root = document.createElement('div');
 root = document.getElementById('main-content') || document.body.appendChild(root);
-root.className += ' todoapp';
+// root.className += ' todoapp';
 
 ReactDOM.render(
 	<TodoApp todoStore={todoStore} viewStore={viewStore}/>,
